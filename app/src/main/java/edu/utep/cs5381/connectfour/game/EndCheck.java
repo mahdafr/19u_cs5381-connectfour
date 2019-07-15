@@ -5,9 +5,13 @@ class EndCheck {
     private Player p;
     private final int CHIPS = 4;
     private int chips; //track for draws
+    private int[] winR;
+    private int[] winC;
 
     EndCheck() {
         chips = 0;
+        winR = new int[CHIPS];
+        winC = new int[CHIPS];
     }
 
     void set(Board board) {
@@ -45,7 +49,11 @@ class EndCheck {
     private boolean checkRow(int r) {
         int counter = 0;
         for ( int i=0 ; i<b.Cols() && counter!=CHIPS ; i++ )
-            counter = ( b.getOwnerAt(r,i)==p.getId() ) ? counter+1 : 0;
+            if ( b.getOwnerAt(r,i)==p.getId() ) {
+                winC[counter] = i;
+                winR[counter] = r;
+                counter+=1;
+            } else counter = 0;
         if ( counter>=CHIPS )
             return true;
         return false;
@@ -59,7 +67,11 @@ class EndCheck {
     private boolean checkCol(int c) {
         int counter = 0;
         for ( int i=0 ; i<b.Rows() && counter!=CHIPS ; i++ )
-            counter = ( b.getOwnerAt(i,c)==p.getId() ) ? counter+1 : 0;
+            if ( b.getOwnerAt(i,c)==p.getId() ) {
+                winC[counter] = c;
+                winR[counter] = i;
+                counter+=1;
+            } else counter = 0;
         if ( counter>=CHIPS )
             return true;
         return false;
@@ -71,5 +83,16 @@ class EndCheck {
      */
     public boolean checkDraw() {
         return ( chips==b.Rows()*b.Cols() );
+    }
+
+    /**
+     * Gets the winning chips as a list: {(R,C),(R,C),(R,C),(R,C)}.
+     * @return the winning sequence of Chips
+     */
+    public int[] getWinningSequence() {
+        int[] seq = new int[CHIPS*2]; //(x,y) coord of each Chip
+        for ( int i=0 ; i<seq.length ; i++ )
+            seq[i] = ( i%2==0 ) ? winR[i/2] : winC[i/2];
+        return seq;
     }
 }

@@ -4,6 +4,7 @@ class Player {
     private String playerName;
     private int id;
     private boolean isPlaying; //is this Player's turn?
+    private int wins;
 
     /**
      * Creates a new Player in the game.
@@ -13,6 +14,7 @@ class Player {
     public Player(String name, int ID) {
         playerName = name;
         id = ID;
+        wins = 0;
     }
 
     /**
@@ -51,5 +53,12 @@ class Player {
      */
     public String getName() {
         return playerName;
+    }
+
+    /**
+     * Increments the number of wins for this Player.
+     */
+    public void wonGame() {
+        wins++;
     }
 }

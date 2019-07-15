@@ -49,9 +49,11 @@ public class Board {
      * @return true if no more chips can be placed in column i
      */
     private boolean isColumnFull(int i) {
-        for ( int c=0; c<board.length && board[rows-1][i].getOwner()==0 ; c++ )
-            return false;
-        return true;
+        int r = 0;
+        while ( r<rows && board[r][i].getOwner()!=0 )
+            r++;
+        if ( r>= rows ) return true;
+        return false;
     }
 
     /**
@@ -84,7 +86,7 @@ public class Board {
      * Who owns the Chip in Place(i,j)?
      * @param i, the row
      * @param j, the column
-     * @return the occupying Player's ID?
+     * @return the occupying Player's ID
      */
     public int getOwnerAt(int i, int j) {
         return board[i][j].getOwner();

@@ -73,7 +73,7 @@ public class Board {
     }
 
     /**
-     * CLears the board.
+     * Clears the board.
      */
     private void clear() {
         board = new Place[rows][columns];

@@ -3,6 +3,8 @@ package edu.utep.cs5381.connectfour.ui;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.text.Layout;
+import android.text.StaticLayout;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -10,12 +12,12 @@ import edu.utep.cs5381.connectfour.game.*;
 
 public class GameView extends View {
     private Parameters params; //bounds for gui elements
-    private PaintData paints;
-    private Drawable player1;
-    private Drawable player2;
-    private Board board;
-    private int[] wins;
-    private int winner;
+    private PaintData paints; //paints for each color
+    private Drawable player1; //p1 image
+    private Drawable player2; //p2 image
+    private Board board; //the board of the game
+    private int[] wins; //the win sequence
+    private int winner; //winning player's ID
     private String player1Name;
     private String player2Name;
     private String currPlayer;
@@ -126,15 +128,26 @@ public class GameView extends View {
      * @param canvas the canvas to draw on
      */
     private void drawButton(Canvas canvas) {
+        String txt = "New";
         int left = params.getButtonLeft();
         int right = params.getButtonRight();
         int top = params.getButtonTop();
         int bottom = params.getButtonBottom();
         int radius = params.getRadius();
 
+        //draw the Button
         canvas.drawRoundRect(left,top,right,bottom,radius,radius,paints.button());
         canvas.drawRoundRect(left,top,right,bottom,radius,radius,paints.buttonBorder());
-        canvas.drawText("New", (left+right)/2-2*radius, top+params.getDiscsRowSkip()-radius, paints.text());
+
+        android.text.TextPaint text = paints.text();
+        text.setTextSize(30 * getResources().getDisplayMetrics().density);
+
+        StaticLayout sl = new StaticLayout(txt, paints.text(), params.getWidth(),
+                Layout.Alignment.ALIGN_CENTER, 1, 1, true);
+        canvas.save();
+        canvas.translate(0, top);
+        sl.draw(canvas);
+        canvas.restore();
     }
 
     /**
@@ -146,18 +159,22 @@ public class GameView extends View {
         int x = 2*params.getRadius();
         int y = params.player1Bottom() + 2*params.getRadius();
         if ( currPlayer!=null && currPlayer==player1Name )
-            canvas.drawText(player1Name,x,y,paints.textCurrent());
+            canvas.drawText(player1Name,x,y,paints.textP1());
         else
             canvas.drawText(player1Name,x,y,paints.textS());
+        if ( winner==1 )
+            canvas.drawText(player1Name,x,y,paints.textWin());
 
         player2.setBounds(params.player2Left(),params.player2Top(),params.player2Right(),params.player2Bottom());
         player2.draw(canvas);
         x = params.player2Left();
         y = params.player2Bottom() + 2*params.getRadius();
         if ( currPlayer!=null && currPlayer==player2Name )
-            canvas.drawText(player2Name,x,y,paints.textCurrent());
+            canvas.drawText(player2Name,x,y,paints.textP2());
         else
             canvas.drawText(player2Name,x,y,paints.textS());
+        if ( winner==2 )
+            canvas.drawText(player2Name,x,y,paints.textWin());
     }
 
     /**
@@ -294,7 +311,7 @@ public class GameView extends View {
         int nwR = board.Rows()-r-1;
         if ( wins!=null ) {
             for ( int i=0 ; i< wins.length && board.getOwnerAt(nwR,c)==winner ; i++ )
-                if ( wins[i]==nwR && i!=wins.length-1 && wins[i+1]==c )
+                if ( (i%2==0) && wins[i]==nwR && i!=wins.length-1 && wins[i+1]==c )
                     return paints.win();
         }
         switch ( board.getOwnerAt(nwR,c) ) {

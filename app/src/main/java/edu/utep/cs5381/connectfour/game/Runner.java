@@ -90,6 +90,28 @@ public class Runner {
     }
 
     /**
+     * Resets the Board and starts a new Connect Four Game.
+     */
+    public void startOver() {
+        board = new Board();
+        checker = new EndCheck();
+        switchTurns();
+        if ( winner==player2 ) player2.wonGame();
+        else player1.wonGame();
+        winner = null;
+    }
+
+    /* **************** Getters **************** */
+    /**
+     * Checks if the game ended by rules of a draw.
+     * @return true if the game was ended by a draw
+     */
+    public boolean wonByDraw() {
+        checker.set(board);
+        return checker.checkDraw();
+    }
+
+    /**
      * Checks if Players can still make moves in the Board.
      * @return true if the game has no winner or is not in a draw
      */
@@ -98,17 +120,6 @@ public class Runner {
     }
 
     /**
-     * Resets the Board and starts a new Connect Four Game.
-     */
-    public void startOver() {
-        board = new Board();
-        checker = new EndCheck();
-        switchTurns();
-        winner = null;
-    }
-
-    /* **************** Getters **************** */
-    /**
      * Gets the current Player in the game.
      * @return the Player
      */
@@ -116,6 +127,16 @@ public class Runner {
         if ( player1.isPlaying() )
             return player1.getName();
         return player2.getName();
+    }
+
+    /**
+     * Gets the current Player in the game.
+     * @return the Player's ID
+     */
+    public int getCurrentPlayerID() {
+        if ( player1.isPlaying() )
+            return player1.getId();
+        return player2.getId();
     }
 
     /**

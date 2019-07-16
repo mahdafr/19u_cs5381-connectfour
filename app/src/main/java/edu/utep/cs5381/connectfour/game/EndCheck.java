@@ -27,7 +27,7 @@ class EndCheck {
      */
     boolean checkWins(Player player, int r, int c) {
         p = player;
-        return ( checkDiag(r,c) || checkRow(r) || checkCol(c) );
+        return ( checkDiagonal(r,c) || checkRow(r) || checkCol(c) );
     }
 
     /**
@@ -36,9 +36,42 @@ class EndCheck {
      * @param c the column to check for a win
      * @return true if there is a Diagonal win because of this Chip
      */
-    private boolean checkDiag(int r, int c) {
-        //todo
+    private boolean checkDiagonal(int r, int c) {
+        for ( int li=-3 ; li<3 ; li++ ) //check up to 3 spaces down/left and up/right
+            for ( int i=-1 ; i<2 ; i++ )
+                for ( int j=-1 ; j<2 ; j++ )
+                    if ( i!=0 && j!=0 && ( checkDiagHelper(r+li,c+li,i,j) ||
+                            checkDiagHelper(r-li,c+li,i,j) || checkDiagHelper(r+li,c-li,i,j)
+                            || checkDiagHelper(r-li,c-li,i,j)) )
+                        return true;
         return false;
+    }
+
+    private boolean checkDiagHelper(int i, int j, int di, int dj) {
+        int counter = 0;
+        for ( int loop=0 ; loop<CHIPS ; loop++ ) {
+            if ( withinBounds(i,j) )
+                if ( b.getOwnerAt(i,j)!=p.getId() )
+                    return false;
+                else {
+                    winR[counter] = i;
+                    winC[counter] = j;
+                    counter++;
+                }
+            i+=di;
+            j+=dj;
+        }
+        return counter==CHIPS;
+    }
+
+    /**
+     * Checks if (i,j) is within the bounds of the Board.
+     * @param i the row to check
+     * @param j the column to check
+     * @return true if (i,j) is no greater than the number of (Rows,Columns) and non-negative
+     */
+    private boolean withinBounds(int i, int j) {
+        return (i<b.Rows() && i>=0) && (j<b.Cols() && j>=0);
     }
 
     /**
@@ -82,6 +115,12 @@ class EndCheck {
      * @return whether there are no more Chips to be played
      */
     public boolean checkDraw() {
+        chips = 0;
+        for ( int i=0 ; i<b.Rows() ; i++ )
+            for ( int j=0 ; j<b.Cols() ; j++ )
+                if ( b.getOwnerAt(i,j)!=0 )
+                    chips++;
+                else ;
         return ( chips==b.Rows()*b.Cols() );
     }
 

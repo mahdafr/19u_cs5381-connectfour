@@ -1,7 +1,7 @@
 ## Connect Four App
 
 ### To Run
-1. Find the released APK in `app\release\app-release.apk`.
+1. Find the released APK in this repo's Release page. [Click here](https://github.com/mahdafr/19u_cs5381-connectfour/releases)
 2. Install the APK into any Android 5.0+ device.
 3. Run the app called "Connect Four".
 3. Play the game!
